@@ -4,6 +4,7 @@ import org.apache.ignite.compute.ComputeJobAdapter
 import java.util.ArrayList
 import org.apache.ignite.compute.ComputeJob
 import org.apache.ignite.compute.ComputeTaskSplitAdapter
+import org.apache.ignite.configuration.IgniteConfiguration
 
 
 class MatrixSortTask : ComputeTaskSplitAdapter<List<List<Long>>, List<List<Long>>>() {
@@ -35,8 +36,13 @@ class MatrixSortTask : ComputeTaskSplitAdapter<List<List<Long>>, List<List<Long>
 
 
 fun main(args: Array<String>) {
-    val ignite = Ignition.start()
-    val matrix = listOf(listOf<Long>(5, 8, 9, 500), listOf<Long>(4, 3, 58, 0))
+    val cfg = IgniteConfiguration()
+    cfg.isPeerClassLoadingEnabled = true;
+    val ignite = Ignition.start(cfg)
+    val matrix = listOf(
+        listOf<Long>(5, 8, 9, 600),
+        listOf<Long>(5, 8, 9, 500),
+        listOf<Long>(4, 3, 58, 0))
     ignite.use { it ->
         val sortedMatrix = it.compute().execute(MatrixSortTask(), matrix)
         println("Отсортированная матрица:\n$sortedMatrix")
